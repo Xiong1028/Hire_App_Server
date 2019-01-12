@@ -27,6 +27,7 @@ router.post('/register', (req, res) => {
     //return onSuccess
     res.send({code: 0, data:{id: 'abc', username, password}});
   }
+  console.log(username,password);
 })
 
 module.exports = router;
