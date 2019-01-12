@@ -39,12 +39,11 @@ const userSchema = mongoose.Schema({
     }
 })
 
-//Define Model (Match collection and manipulate the collection)
-//model() => constructor function
+// Define Model (Match collection and manipulate the collection) model() =>
+// constructor function
 const UserModel = mongoose.model('user', userSchema)
 
-//CRUD
-//save()
+//CRUD save()
 const testSave = (userModel) => {
     //call save()
     userModel.save((err, userDoc) => {
@@ -72,3 +71,24 @@ function testFind() {
 
 testFind()
 
+//Model.findByAndUpdate()
+function testUpdate() {
+    UserModel.findByIdAndUpdate({
+        _id: '5c396211dc3da71680d99e82'
+    }, {username:'Jack'},(err,oldUserDoc)=>{
+        console.log("findByIdAndUpdate(): ",err,oldUserDoc)
+    })
+}
+
+testUpdate()
+
+//Model.remove()
+function testRemove(){
+    UserModel.remove({
+        _id: '5c396211dc3da71680d99e82'
+    },(err,userDoc)=>{
+        console.log("remove():",err,userDoc)
+    })
+}
+
+testRemove()
