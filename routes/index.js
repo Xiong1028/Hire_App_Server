@@ -25,18 +25,18 @@ router.get('/', function (req, res, next) {
 * */
 router.post('/register', (req, res) => {
     //get the request object from the request body
-    const {username, password, type} = req.body
+    const {username, password, type} = req.body;
 
     //condition: true->save data; false->err
     UserModel.findOne({username}, (err, userDoc) => {
         if (userDoc) {
-            res.send({code: 1, msg: 'Sorry, the username is unvailable'})
+            res.send({code: 1, msg: 'Sorry, the username is unvailable'});
         } else {
             new UserModel({username, type, password: md5(password)}).save((err, user) => {
                 //once you set the maxAge, it is longer cookie, not session cookie
-                res.cookie('userid', user._id, {maxAge: 1000 * 60 * 60 * 24})
-                const data = {username, type, _id: user._id}
-                res.send({code: 0, data})
+                res.cookie('userid', user._id, {maxAge: 1000 * 60 * 60 * 24});
+                const data = {username, type, _id: user._id};
+                res.send({code: 0, data});
             })
         }
     })
@@ -45,16 +45,16 @@ router.post('/register', (req, res) => {
 
 //login route
 router.post('/login', (req, res) => {
-    const {username, password} = req.body
+    const {username, password} = req.body;
 
     //query the databases according to username and password. if false, return err msg; else: return all info of user
     //{password:0} is a filter, which could be definded at the beginning
     UserModel.findOne({username, password: md5(password)}, filter, (err, userDoc) => {
         if (userDoc) {
-            res.cookie('userid', userDoc._id, {maxAge: 1000 * 60 * 60 * 24})
-            res.send({code: 0, data: userDoc})
+            res.cookie('userid', userDoc._id, {maxAge: 1000 * 60 * 60 * 24});
+            res.send({code: 0, data: userDoc});
         } else {
-            res.send({code: 1, msg: 'username or password is invalid'})
+            res.send({code: 1, msg: 'username or password is invalid'});
         }
     })
 })
