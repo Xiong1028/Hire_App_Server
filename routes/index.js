@@ -55,6 +55,7 @@ router.post('/register', (req, res) => {
 //login route
 router.post('/login', (req, res) => {
     const {username, password} = req.body;
+    console.log(req.body);
 
     // query the databases according to username and password. if false, return err
     // msg; else: return all info of user {password:0} is a filter, which could be
@@ -92,7 +93,7 @@ router.post('/update', (req, res) => {
             //return a msg
             res.send({code:1,msg:"Please Login"});
         }else{
-            //三点运算符在后台没有办法使用，Object.assin(对象1，对象2)
+            //三点运算符在后台没有办法使用，Object.assign(对象1，对象2)
             const{_id,username,type} = oldUser;
             const data  = Object.assign(user,{_id,username,type});
             res.send({code:0,data:data});
