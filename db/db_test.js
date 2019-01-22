@@ -3,19 +3,19 @@
     using mongoose to manage mongoDB
 * */
 
-const md5 = require('blueimp-md5')
+const md5 = require('blueimp-md5');
 
 //import mongoose
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 //connect the server. mongodb:// is a protocal
-mongoose.connect('mongodb://localhost:27017/hire_test')
+mongoose.connect('mongodb://localhost:27017/hire_test');
 
-const conn = mongoose.connection
+const conn = mongoose.connection;
 
 conn.on('connected', () => {
-    console.log('connect succ')
-})
+    console.log('connect succ');
+});
 
 /*
     得到对应特定文档的数据
@@ -34,25 +34,27 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    header: {
+    icon: {
         type: String
     }
 })
 
+
 // Define Model (Match collection and manipulate the collection) model() =>
 // constructor function
-const UserModel = mongoose.model('user', userSchema)
+const UserModel = mongoose.model('user', userSchema);
+
 
 //CRUD save()
+//userModel is a instance of UserModel
 const testSave = (userModel) => {
     //call save()
     userModel.save((err, userDoc) => {
-        console.log('save()', err, userDoc)
+        console.log('save()', err, userDoc);
     })
 }
 
-const userModel1 = new UserModel({username: 'Jim', password: md5('abc'), type: 'Applicant'})
-testSave(userModel1)
+const userModel1 = new UserModel({username: 'Jim', password: md5('abc'), type: 'Applicant'});
 
 //find() or findOne()
 function testFind() {
@@ -60,7 +62,7 @@ function testFind() {
         _id: '5c396211dc3da71680d99e82'
     }, (err, users) => {
         console.log("find()", err, users)
-    })
+    });
 
     UserModel.findOne({
         _id: '5c396211dc3da71680d99e82'
@@ -69,9 +71,9 @@ function testFind() {
     })
 }
 
-testFind()
+testFind();
 
-//Model.findByAndUpdate()
+//Model.findByIdAndUpdate()
 function testUpdate() {
     UserModel.findByIdAndUpdate({
         _id: '5c396211dc3da71680d99e82'
@@ -80,7 +82,7 @@ function testUpdate() {
     })
 }
 
-testUpdate()
+testUpdate();
 
 //Model.remove()
 function testRemove(){
@@ -91,4 +93,5 @@ function testRemove(){
     })
 }
 
-testRemove()
+testRemove();
+
