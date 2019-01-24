@@ -86,6 +86,7 @@ router.post('/update', (req, res) => {
     
     //if userid is existed, update the user data in mongoDB
     const user = req.body; //no _id
+    console.log(user);
     UserModel.findByIdAndUpdate({_id:userid},user,(err,oldUser)=>{
         if(!oldUser){
             //Notice browser to delete userid if !olduser
@@ -100,5 +101,21 @@ router.post('/update', (req, res) => {
         }
     })
 })
+
+//获取用户信息的路由（根据cookie中的userid）
+router.get('/user',(req,res)=>{
+    //从请求中的cookie得到userid
+    const userid = req.cookies.userid;
+    if(!userid){
+        return res.send({code:1,msg:'Please Login'});
+    }
+
+    // 根据userid查询对应的user
+    UserModel.findOne({_id:userid},filter,function(err,userDoc){
+        res.send({code:0,data:userDoc});
+    })
+
+})
+
 
 module.exports = router;
