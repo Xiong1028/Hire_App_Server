@@ -2,7 +2,7 @@ var express = require('express')
 var router = express.Router()
 
 const md5 = require('blueimp-md5')
-const {UserModel} = require('../db/models')
+const {UserModel,ChatModel} = require('../db/models')
 
 //define the filter
 const filter = {
@@ -116,6 +116,104 @@ router.get('/user',(req,res)=>{
     })
 
 })
+
+//获取用户列表（根据类型）
+//req参数类型主要有两种：req.query(), req.params() . 要求url中 / ***/:type
+router.get('/userlist',function(req,res){
+    const {type} = req.query;
+    //filter表示返回的数据，过滤其中第三信息，如密码
+    UserModel.find({type},filter,function(err,users){
+        res.send({code:0,data:users});
+    })
+})
+
+
+/*
+*   +++++获取当前用户所有相关聊天信息列表++++
+* */
+
+router.get('/msglist',function(req,res){
+    /*
+      ====Get userid from cookie===
+    */
+    const userid = req.cookies.userid;
+
+    //get all users document
+    UserModel.find(function(err,userDocs){
+        //use object structure to save all the users info: key ->user_id,val ->name, icon
+        const users = {};
+        userDocs.forEach(doc=>{
+            users[doc._id] = {username:doc.username,icon:doc.icon};
+        })
+
+        // 另外一种写法
+        /*
+        const users = userDocs.reduce((users,user)=>{
+            users[user._id] = {username:doc.username,icon:doc.icon};
+            return users;
+        },{})
+        */
+
+
+        /*
+        *   ===GET All Chat info by userid==
+        *   @args1: query object: {'$or':[{from:userid},{to:userid}]}
+        *   @args2: filter object
+        *   @args3: callback
+        *
+        * */
+
+
+        ChatModel.find({'$or':[{from:userid},{to:userid}]},filter,function(err,chatMsgs){
+            //return all the chat msgs related with this userid
+            res.send({code:0,data:{users,chatMsgs}});
+        })
+
+    })
+})
+
+
+/*
+*   API: 修改指定消息为已读
+*
+ *  */
+
+router.post('/readmsg',function(req,res){
+    //得到请求中的from和to
+    const from = req.body.from;
+    const to = req.cookies.userid;
+
+    /*
+    *   更新数据库中的chat数据
+    *   参数1：查询条件
+    *   参数2：更新为指定的数据对象
+    *   参数3：是否1次更新多条，默认只更新一条
+    *   参数4：更新完成的回调函数
+    *
+    * */
+
+    ChatModel.update({from,to,read:false},{read:true},{multi:true},function(err,doc){
+        console.log('/readmsg',doc);
+        res.send({code:0,data:doc.nModified})//更新的数量
+
+    })
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 module.exports = router;
